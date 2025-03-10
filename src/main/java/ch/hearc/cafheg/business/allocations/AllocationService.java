@@ -8,8 +8,8 @@ import java.util.Map;
 
 public class AllocationService {
 
-  private static final String PARENT_1 = "Parent1";
-  private static final String PARENT_2 = "Parent2";
+  public static final String PARENT_1 = "Parent1";
+  public static final String PARENT_2 = "Parent2";
 
   private final AllocataireMapper allocataireMapper;
   private final AllocationMapper allocationMapper;
