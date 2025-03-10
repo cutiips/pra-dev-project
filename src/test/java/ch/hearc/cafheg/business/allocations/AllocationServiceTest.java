@@ -10,11 +10,14 @@ import ch.hearc.cafheg.infrastructure.persistance.AllocationMapper;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.*;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -108,6 +111,68 @@ class AllocationServiceTest {
     String result = allocationService.getParentDroitAllocation(request);
     assertThat(result).isEqualTo(AllocationService.PARENT_1);
   }
+
+
+}
+
+
+  @Test
+  void getParentDroitAllocation_Parent1OnlyWorking_ShouldReturnParent1() {
+    Map<String, Object> params = new HashMap<>();
+    params.put("parent1ActiviteLucrative", true);
+    params.put("parent2ActiviteLucrative", false);
+
+    String result = allocationService.getParentDroitAllocation(params);
+    assertThat(result).isEqualTo(allocationService.PARENT_1);
+  }
+
+  @Test
+  void getParentDroitAllocation_Parent2OnlyWorking_ShouldReturnParent2() {
+    Map<String, Object> params = new HashMap<>();
+    params.put("parent1ActiviteLucrative", false);
+    params.put("parent2ActiviteLucrative", true);
+
+    String result = allocationService.getParentDroitAllocation(params);
+    assertThat(result).isEqualTo(AllocationService.PARENT_2);
+  }
+
+  @Test
+  void getParentDroitAllocation_BothWorking_Parent1HigherSalary_ShouldReturnParent1() {
+    Map<String, Object> params = new HashMap<>();
+    params.put("parent1ActiviteLucrative", true);
+    params.put("parent2ActiviteLucrative", true);
+    params.put("parent1Salaire", new BigDecimal(5000));
+    params.put("parent2Salaire", new BigDecimal(3000));
+
+    String result = allocationService.getParentDroitAllocation(params);
+    assertThat(result).isEqualTo(AllocationService.PARENT_1);
+  }
+
+  @Test
+  void getParentDroitAllocation_BothWorking_Parent2HigherSalary_ShouldReturnParent2() {
+    Map<String, Object> params = new HashMap<>();
+    params.put("parent1ActiviteLucrative", true);
+    params.put("parent2ActiviteLucrative", true);
+    params.put("parent1Salaire", new BigDecimal(2500));
+    params.put("parent2Salaire", new BigDecimal(4000));
+
+    String result = allocationService.getParentDroitAllocation(params);
+    assertThat(result).isEqualTo(AllocationService.PARENT_2);
+  }
+
+  @Test
+  void getParentDroitAllocation_BothNotWorking_ShouldReturnParent2ByDefault() {
+    Map<String, Object> params = new HashMap<>();
+    params.put("parent1ActiviteLucrative", false);
+    params.put("parent2ActiviteLucrative", false);
+    params.put("parent1Salaire", new BigDecimal(0));
+    params.put("parent2Salaire", new BigDecimal(0));
+
+    String result = allocationService.getParentDroitAllocation(params);
+    assertThat(result).isEqualTo(AllocationService.PARENT_2);
+  }
+
+
 
 
 }
