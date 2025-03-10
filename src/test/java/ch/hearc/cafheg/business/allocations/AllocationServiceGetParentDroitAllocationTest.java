@@ -2,6 +2,7 @@ package ch.hearc.cafheg.business.allocations;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,8 +15,29 @@ class AllocationServiceGetParentDroitAllocationTest {
 
     @BeforeEach
     void setUp() {
-        // Les mappers ne sont pas utilisés dans cette méthode donc null suffit
+        // Les mappers ne sont pas utilisés dans cette méthode
         allocationService = new AllocationService(null, null);
+    }
+
+    // Accès aux constantes privées via réflexion
+    private String getExpectedParent1() {
+        try {
+            Field field = AllocationService.class.getDeclaredField("PARENT_1");
+            field.setAccessible(true);
+            return (String) field.get(null);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String getExpectedParent2() {
+        try {
+            Field field = AllocationService.class.getDeclaredField("PARENT_2");
+            field.setAccessible(true);
+            return (String) field.get(null);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test
@@ -26,7 +48,7 @@ class AllocationServiceGetParentDroitAllocationTest {
         params.put("parent1Salaire", 2000);
         params.put("parent2Salaire", 3000);
         String result = allocationService.getParentDroitAllocation(params);
-        assertEquals(AllocationService.PARENT_1, result);
+        assertEquals(getExpectedParent1(), result);
     }
 
     @Test
@@ -37,7 +59,7 @@ class AllocationServiceGetParentDroitAllocationTest {
         params.put("parent1Salaire", 3000);
         params.put("parent2Salaire", 2000);
         String result = allocationService.getParentDroitAllocation(params);
-        assertEquals(AllocationService.PARENT_2, result);
+        assertEquals(getExpectedParent2(), result);
     }
 
     @Test
@@ -48,7 +70,7 @@ class AllocationServiceGetParentDroitAllocationTest {
         params.put("parent1Salaire", 4000);
         params.put("parent2Salaire", 3000);
         String result = allocationService.getParentDroitAllocation(params);
-        assertEquals(AllocationService.PARENT_1, result);
+        assertEquals(getExpectedParent1(), result);
     }
 
     @Test
@@ -59,7 +81,7 @@ class AllocationServiceGetParentDroitAllocationTest {
         params.put("parent1Salaire", 2500);
         params.put("parent2Salaire", 3500);
         String result = allocationService.getParentDroitAllocation(params);
-        assertEquals(AllocationService.PARENT_2, result);
+        assertEquals(getExpectedParent2(), result);
     }
 
     @Test
@@ -70,7 +92,7 @@ class AllocationServiceGetParentDroitAllocationTest {
         params.put("parent1Salaire", 5000);
         params.put("parent2Salaire", 4000);
         String result = allocationService.getParentDroitAllocation(params);
-        assertEquals(AllocationService.PARENT_1, result);
+        assertEquals(getExpectedParent1(), result);
     }
 
     @Test
@@ -81,7 +103,7 @@ class AllocationServiceGetParentDroitAllocationTest {
         params.put("parent1Salaire", 3000);
         params.put("parent2Salaire", 4000);
         String result = allocationService.getParentDroitAllocation(params);
-        assertEquals(AllocationService.PARENT_2, result);
+        assertEquals(getExpectedParent2(), result);
     }
 
     @Test
@@ -92,8 +114,8 @@ class AllocationServiceGetParentDroitAllocationTest {
         params.put("parent1Salaire", 3000);
         params.put("parent2Salaire", 3000);
         String result = allocationService.getParentDroitAllocation(params);
-        // Si les salaires sont égaux, la condition > est fausse : retourne PARENT_2
-        assertEquals(AllocationService.PARENT_2, result);
+        // Condition > non vérifiée → retourne PARENT_2
+        assertEquals(getExpectedParent2(), result);
     }
 
     @Test
@@ -104,14 +126,14 @@ class AllocationServiceGetParentDroitAllocationTest {
         params.put("parent1Salaire", 3000);
         params.put("parent2Salaire", 3000);
         String result = allocationService.getParentDroitAllocation(params);
-        assertEquals(AllocationService.PARENT_2, result);
+        assertEquals(getExpectedParent2(), result);
     }
 
     @Test
     void testEmptyMapDefaults() {
         Map<String, Object> params = new HashMap<>();
         String result = allocationService.getParentDroitAllocation(params);
-        // Valeurs par défaut : aucun parent actif, salaires à zéro → retourne PARENT_2
-        assertEquals(AllocationService.PARENT_2, result);
+        // Valeurs par défaut (aucun parent actif, salaires à zéro) → retourne PARENT_2
+        assertEquals(getExpectedParent2(), result);
     }
 }
