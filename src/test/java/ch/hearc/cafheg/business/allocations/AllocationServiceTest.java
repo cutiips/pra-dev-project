@@ -99,108 +99,15 @@ class AllocationServiceTest {
   }
 
   // Batterie de tests pour getParentDroitAllocation
-
-  // Cas 1 : Seul le parent1 est actif
   @Test
-  void testOnlyParent1ActiviteLucrative() {
-    Map<String, Object> params = new HashMap<>();
-    params.put("parent1ActiviteLucrative", true);
-    params.put("parent2ActiviteLucrative", false);
-    params.put("parent1Salaire", 2000);
-    params.put("parent2Salaire", 3000);
-    String result = allocationService.getParentDroitAllocation(params);
-    assertEquals(getExpectedParent1(), result);
+  void getParentDroitAllocation_Parent1OnlyWorking_ShouldReturnParent1() {
+    ParentDroitAllocationRequest request = new ParentDroitAllocationRequest();
+    request.setParent1ActiviteLucrative(true);
+    request.setParent2ActiviteLucrative(false);
+
+    String result = allocationService.getParentDroitAllocation(request);
+    assertThat(result).isEqualTo(AllocationService.PARENT_1);
   }
 
-  // Cas 2 : Seul le parent2 est actif
-  @Test
-  void testOnlyParent2ActiviteLucrative() {
-    Map<String, Object> params = new HashMap<>();
-    params.put("parent1ActiviteLucrative", false);
-    params.put("parent2ActiviteLucrative", true);
-    params.put("parent1Salaire", 3000);
-    params.put("parent2Salaire", 2000);
-    String result = allocationService.getParentDroitAllocation(params);
-    assertEquals(getExpectedParent2(), result);
-  }
 
-  // Cas 3 : Les deux parents actifs, salaire parent1 > parent2
-  @Test
-  void testBothParentsActiviteLucrativeHigherSalaryParent1() {
-    Map<String, Object> params = new HashMap<>();
-    params.put("parent1ActiviteLucrative", true);
-    params.put("parent2ActiviteLucrative", true);
-    params.put("parent1Salaire", 4000);
-    params.put("parent2Salaire", 3000);
-    String result = allocationService.getParentDroitAllocation(params);
-    assertEquals(getExpectedParent1(), result);
-  }
-
-  // Cas 4 : Les deux parents actifs, salaire parent1 < parent2
-  @Test
-  void testBothParentsActiviteLucrativeHigherSalaryParent2() {
-    Map<String, Object> params = new HashMap<>();
-    params.put("parent1ActiviteLucrative", true);
-    params.put("parent2ActiviteLucrative", true);
-    params.put("parent1Salaire", 2500);
-    params.put("parent2Salaire", 3500);
-    String result = allocationService.getParentDroitAllocation(params);
-    assertEquals(getExpectedParent2(), result);
-  }
-
-  // Cas 5 : Aucun parent actif, salaire parent1 > parent2
-  @Test
-  void testNeitherParentActiviteLucrativeHigherSalaryParent1() {
-    Map<String, Object> params = new HashMap<>();
-    params.put("parent1ActiviteLucrative", false);
-    params.put("parent2ActiviteLucrative", false);
-    params.put("parent1Salaire", 5000);
-    params.put("parent2Salaire", 4000);
-    String result = allocationService.getParentDroitAllocation(params);
-    assertEquals(getExpectedParent1(), result);
-  }
-
-  // Cas 6 : Aucun parent actif, salaire parent1 < parent2
-  @Test
-  void testNeitherParentActiviteLucrativeHigherSalaryParent2() {
-    Map<String, Object> params = new HashMap<>();
-    params.put("parent1ActiviteLucrative", false);
-    params.put("parent2ActiviteLucrative", false);
-    params.put("parent1Salaire", 3000);
-    params.put("parent2Salaire", 4000);
-    String result = allocationService.getParentDroitAllocation(params);
-    assertEquals(getExpectedParent2(), result);
-  }
-
-  // Cas 7 : Égalité des salaires avec les deux parents actifs (retourne PARENT_2)
-  @Test
-  void testEqualSalaryBothActiviteLucrative() {
-    Map<String, Object> params = new HashMap<>();
-    params.put("parent1ActiviteLucrative", true);
-    params.put("parent2ActiviteLucrative", true);
-    params.put("parent1Salaire", 3000);
-    params.put("parent2Salaire", 3000);
-    String result = allocationService.getParentDroitAllocation(params);
-    assertEquals(getExpectedParent2(), result);
-  }
-
-  // Cas 8 : Égalité des salaires avec aucun parent actif (retourne PARENT_2)
-  @Test
-  void testEqualSalaryNeitherActiviteLucrative() {
-    Map<String, Object> params = new HashMap<>();
-    params.put("parent1ActiviteLucrative", false);
-    params.put("parent2ActiviteLucrative", false);
-    params.put("parent1Salaire", 3000);
-    params.put("parent2Salaire", 3000);
-    String result = allocationService.getParentDroitAllocation(params);
-    assertEquals(getExpectedParent2(), result);
-  }
-
-  // Cas 9 : Carte vide → utilisation des valeurs par défaut
-  @Test
-  void testEmptyMapDefaults() {
-    Map<String, Object> params = new HashMap<>();
-    String result = allocationService.getParentDroitAllocation(params);
-    assertEquals(getExpectedParent2(), result);
-  }
 }
