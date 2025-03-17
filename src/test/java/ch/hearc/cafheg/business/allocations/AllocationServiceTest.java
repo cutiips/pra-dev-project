@@ -101,77 +101,59 @@ class AllocationServiceTest {
     }
   }
 
-  // Batterie de tests pour getParentDroitAllocation
-  @Test
-  void getParentDroitAllocation_Parent1OnlyWorking_ShouldReturnParent1() {
-    ParentDroitAllocationRequest request = new ParentDroitAllocationRequest();
-    request.setParent1ActiviteLucrative(true);
-    request.setParent2ActiviteLucrative(false);
 
-    String result = allocationService.getParentDroitAllocation(request);
-    assertThat(result).isEqualTo(AllocationService.PARENT_1);
-  }
+    @Test
+    void getParentDroitAllocation_Parent1OnlyWorking_ShouldReturnParent1() {
+        ParentDroitAllocationRequest request = new ParentDroitAllocationRequest();
+        request.setParent1ActiviteLucrative(true);
+        request.setParent2ActiviteLucrative(false);
 
+        String result = allocationService.getParentDroitAllocation(request);
+        assertThat(result).isEqualTo(AllocationService.PARENT_1);
+    }
 
-}
+    @Test
+    void getParentDroitAllocation_Parent2OnlyWorking_ShouldReturnParent2() {
+        ParentDroitAllocationRequest request = new ParentDroitAllocationRequest();
+        request.setParent1ActiviteLucrative(false);
+        request.setParent2ActiviteLucrative(true);
 
+        String result = allocationService.getParentDroitAllocation(request);
+        assertThat(result).isEqualTo(AllocationService.PARENT_2);
+    }
+    @Test
+    void getParentDroitAllocation_BothWorking_Parent1HigherSalary_ShouldReturnParent1() {
+        ParentDroitAllocationRequest request = new ParentDroitAllocationRequest();
+        request.setParent1ActiviteLucrative(true);
+        request.setParent2ActiviteLucrative(true);
+        request.setParent1Salaire(new BigDecimal(5000));
+        request.setParent2Salaire(new BigDecimal(3000));
 
-  @Test
-  void getParentDroitAllocation_Parent1OnlyWorking_ShouldReturnParent1() {
-    Map<String, Object> params = new HashMap<>();
-    params.put("parent1ActiviteLucrative", true);
-    params.put("parent2ActiviteLucrative", false);
+        String result = allocationService.getParentDroitAllocation(request);
+        assertThat(result).isEqualTo(AllocationService.PARENT_1);
+    }
 
-    String result = allocationService.getParentDroitAllocation(params);
-    assertThat(result).isEqualTo(allocationService.PARENT_1);
-  }
+    @Test
+    void getParentDroitAllocation_BothWorking_Parent2HigherSalary_ShouldReturnParent2() {
+        ParentDroitAllocationRequest request = new ParentDroitAllocationRequest();
+        request.setParent1ActiviteLucrative(true);
+        request.setParent2ActiviteLucrative(true);
+        request.setParent1Salaire(new BigDecimal(3000));
+        request.setParent2Salaire(new BigDecimal(5000));
 
-  @Test
-  void getParentDroitAllocation_Parent2OnlyWorking_ShouldReturnParent2() {
-    Map<String, Object> params = new HashMap<>();
-    params.put("parent1ActiviteLucrative", false);
-    params.put("parent2ActiviteLucrative", true);
+        String result = allocationService.getParentDroitAllocation(request);
+        assertThat(result).isEqualTo(AllocationService.PARENT_2);
+    }
 
-    String result = allocationService.getParentDroitAllocation(params);
-    assertThat(result).isEqualTo(AllocationService.PARENT_2);
-  }
+    @Test
+    void getParentDroitAllocation_BothNotWorking_ShouldReturnParent2ByDefault() {
+        ParentDroitAllocationRequest request = new ParentDroitAllocationRequest();
+        request.setParent1ActiviteLucrative(false);
+        request.setParent2ActiviteLucrative(false);
 
-  @Test
-  void getParentDroitAllocation_BothWorking_Parent1HigherSalary_ShouldReturnParent1() {
-    Map<String, Object> params = new HashMap<>();
-    params.put("parent1ActiviteLucrative", true);
-    params.put("parent2ActiviteLucrative", true);
-    params.put("parent1Salaire", new BigDecimal(5000));
-    params.put("parent2Salaire", new BigDecimal(3000));
-
-    String result = allocationService.getParentDroitAllocation(params);
-    assertThat(result).isEqualTo(AllocationService.PARENT_1);
-  }
-
-  @Test
-  void getParentDroitAllocation_BothWorking_Parent2HigherSalary_ShouldReturnParent2() {
-    Map<String, Object> params = new HashMap<>();
-    params.put("parent1ActiviteLucrative", true);
-    params.put("parent2ActiviteLucrative", true);
-    params.put("parent1Salaire", new BigDecimal(2500));
-    params.put("parent2Salaire", new BigDecimal(4000));
-
-    String result = allocationService.getParentDroitAllocation(params);
-    assertThat(result).isEqualTo(AllocationService.PARENT_2);
-  }
-
-  @Test
-  void getParentDroitAllocation_BothNotWorking_ShouldReturnParent2ByDefault() {
-    Map<String, Object> params = new HashMap<>();
-    params.put("parent1ActiviteLucrative", false);
-    params.put("parent2ActiviteLucrative", false);
-    params.put("parent1Salaire", new BigDecimal(0));
-    params.put("parent2Salaire", new BigDecimal(0));
-
-    String result = allocationService.getParentDroitAllocation(params);
-    assertThat(result).isEqualTo(AllocationService.PARENT_2);
-  }
-
+        String result = allocationService.getParentDroitAllocation(request);
+        assertThat(result).isEqualTo(AllocationService.PARENT_2);
+    }
 
 
 
