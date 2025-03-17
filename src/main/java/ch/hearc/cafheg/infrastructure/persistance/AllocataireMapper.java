@@ -15,6 +15,8 @@ public class AllocataireMapper extends Mapper {
   private static final String QUERY_FIND_WHERE_NOM_LIKE = "SELECT NOM,PRENOM,NO_AVS FROM ALLOCATAIRES WHERE NOM LIKE ?";
   private static final String QUERY_FIND_WHERE_NUMERO = "SELECT NO_AVS, NOM, PRENOM FROM ALLOCATAIRES WHERE NUMERO=?";
 
+  private static final String QUERY_DELETE_BY_ID = "DELETE FROM ALLOCATAIRES WHERE NUMERO=?";
+
   public List<Allocataire> findAll(String likeNom) {
     System.out.println("findAll() " + likeNom);
     Connection connection = activeJDBCConnection();
@@ -67,6 +69,23 @@ public class AllocataireMapper extends Mapper {
           resultSet.getString(2), resultSet.getString(3));
     } catch (SQLException e) {
       throw new RuntimeException(e);
+    }
+  }
+
+  public void deleteById(long id) {
+    System.out.println("deleteById() " + id);
+    Connection connection = activeJDBCConnection();
+    try {
+      System.out.println("SQL: " + QUERY_DELETE_BY_ID);
+      PreparedStatement preparedStatement = connection.prepareStatement(QUERY_DELETE_BY_ID);
+      preparedStatement.setLong(1, id);
+      int rowsAffected = preparedStatement.executeUpdate();
+      if (rowsAffected == 0) {
+        throw new RuntimeException("Aucun allocataire supprimé. ID non trouvé : " + id);
+      }
+      System.out.println("Allocataire supprimé avec succès !");
+    } catch (SQLException e) {
+      throw new RuntimeException("Erreur lors de la suppression de l'allocataire", e);
     }
   }
 }
