@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <!-- Appender pour les erreurs (error) dans les packages contenant 'ch' -->
+    <appender name="ERROR_FILE" class="ch.qos.logback.core.FileAppender">
+        <file>err.log</file>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Appender pour les infos (info) dans les services (rotation quotidienne) -->
+    <appender name="INFO_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>cafheg.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>cafheg_%d{yyyy-MM-dd}.log</fileNamePattern>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Appender pour le debug dans la console -->
+    <appender name="DEBUG_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Logger pour les erreurs dans les packages contenant 'ch' -->
+    <logger name="ch" level="ERROR">
+        <appender-ref ref="ERROR_FILE"/>
+    </logger>
+
+    <!-- Logger pour les infos dans les services -->
+    <logger name="ch.hearc.cafheg.services" level="INFO">
+        <appender-ref ref="INFO_FILE"/>
+    </logger>
+
+    <!-- Logger global pour le debug dans la console -->
+    <root level="DEBUG">
+        <appender-ref ref="DEBUG_CONSOLE"/>
+    </root>
+
+</configuration>
