@@ -56,4 +56,8 @@ public class AllocataireService {
         System.out.println("Allocataire " + allocataireId + " supprimé avec succès.");
         return true;
     }
+
+    public Allocataire findByNoAVS(String noAVS) {
+        return allocataireMapper.findByNoAVS(noAVS);
+    }
 }
