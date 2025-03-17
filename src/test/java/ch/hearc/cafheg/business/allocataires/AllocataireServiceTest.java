@@ -63,7 +63,7 @@ class AllocataireServiceTest {
     void deleteAllocataire_ShouldCallMapper_WhenAllocataireExists() {
         long allocataireId = 101L;
 
-        allocataireService.supprimerAllocataire(allocataireId);
+        allocataireService.deleteAllocataire(allocataireId);
 
         verify(allocataireMapper, times(1)).deleteById(allocataireId);
     }
@@ -75,9 +75,43 @@ class AllocataireServiceTest {
                 .when(allocataireMapper).deleteById(allocataireId);
 
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            allocataireService.supprimerAllocataire(allocataireId);
+            allocataireService.deleteAllocataire(allocataireId);
         });
 
         assertThat(exception.getMessage()).isEqualTo("Allocataire introuvable.");
+    }
+
+    @Test
+    void updateAllocataire_ShouldUpdate_WhenNameOrSurnameChanges() {
+        String noAVS = "756.1234.5678.90";
+        Allocataire existingAllocataire = new Allocataire(new NoAVS(noAVS), "Doe", "John");
+        when(allocataireMapper.findByNoAVS(noAVS)).thenReturn(existingAllocataire);
+
+        allocataireService.updateAllocataire(noAVS, "Smith", "John");
+
+        verify(allocataireMapper).updateAllocataire(noAVS, "Smith", "John");
+    }
+
+    @Test
+    void updateAllocataire_ShouldNotUpdate_WhenNoChange() {
+        String noAVS = "756.1234.5678.90";
+        Allocataire existingAllocataire = new Allocataire(new NoAVS(noAVS), "Doe", "John");
+        when(allocataireMapper.findByNoAVS(noAVS)).thenReturn(existingAllocataire);
+
+        allocataireService.updateAllocataire(noAVS, "Doe", "John");
+
+        verify(allocataireMapper, never()).updateAllocataire(anyString(), anyString(), anyString());
+    }
+
+    @Test
+    void updateAllocataire_ShouldThrowException_WhenAllocataireNotFound() {
+        String noAVS = "756.9999.8888.77";
+        when(allocataireMapper.findByNoAVS(noAVS)).thenReturn(null);
+
+        Exception exception = assertThrows(RuntimeException.class, () -> {
+            allocataireService.updateAllocataire(noAVS, "Smith", "Jane");
+        });
+
+        assertThat(exception.getMessage()).isEqualTo("Allocataire non trouvé avec le numéro AVS : " + noAVS);
     }
 }

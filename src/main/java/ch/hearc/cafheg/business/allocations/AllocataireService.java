@@ -17,10 +17,30 @@ public class AllocataireService {
     }
 
     public List<Allocataire> findAllAllocataires(String nom) {
-        return allocataireMapper.findAll(nom);
+        return allocataireMapper.findAll(nom) ;
     }
 
-    public boolean supprimerAllocataire(long allocataireId) {
+    public boolean updateAllocataire(String noAVS, String nouveauNom, String nouveauPrenom) {
+        // Récupérer l'allocataire existant
+        Allocataire allocataire = allocataireMapper.findByNoAVS(noAVS);
+        if (allocataire == null) {
+            throw new IllegalArgumentException("Allocataire non trouvé avec le numéro AVS : " + noAVS);
+        }
+
+        // Vérifier si des changements ont été effectués
+        if (allocataire.getNom().equals(nouveauNom) && allocataire.getPrenom().equals(nouveauPrenom)) {
+            return false; // Aucun changement nécessaire
+        }
+
+        // Modifier l'allocataire
+        allocataire.setNom(nouveauNom);
+        allocataire.setPrenom(nouveauPrenom);
+        allocataireMapper.updateAllocataire(allocataire.getNoAVS().getValue(), allocataire.getNom(), allocataire.getPrenom());
+
+        return true; // Modification effectuée
+    }
+
+    public boolean deleteAllocataire(long allocataireId) {
         // Vérifier si l'allocataire possède des versements
         boolean aDesVersements = versementMapper.findVersementParentEnfant().stream()
                 .anyMatch(v -> v.getParentId() == allocataireId);
