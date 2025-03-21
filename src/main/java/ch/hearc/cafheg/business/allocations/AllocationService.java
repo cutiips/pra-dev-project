@@ -4,10 +4,7 @@ import ch.hearc.cafheg.infrastructure.persistance.AllocataireMapper;
 import ch.hearc.cafheg.infrastructure.persistance.AllocationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.math.BigDecimal;
 import java.util.List;
-import java.util.Map;
 
 public class AllocationService {
 
@@ -35,16 +32,16 @@ public class AllocationService {
     return allocationMapper.findAll();
   }
 
-  public String getParentDroitAllocation(Map<String, Object> parameters) {
+  public String getParentDroitAllocation(ParentDroitAllocationParams params) {
     logger.info("Déterminer quel parent a le droit aux allocations");
-    String eR = (String)parameters.getOrDefault("enfantResidence", "");
-    Boolean p1AL = (Boolean)parameters.getOrDefault("parent1ActiviteLucrative", false);
-    String p1Residence = (String)parameters.getOrDefault("parent1Residence", "");
-    Boolean p2AL = (Boolean)parameters.getOrDefault("parent2ActiviteLucrative", false);
-    String p2Residence = (String)parameters.getOrDefault("parent2Residence", "");
-    Boolean pEnsemble = (Boolean)parameters.getOrDefault("parentsEnsemble", false);
-    Number salaireP1 = (Number) parameters.getOrDefault("parent1Salaire", BigDecimal.ZERO);
-    Number salaireP2 = (Number) parameters.getOrDefault("parent2Salaire", BigDecimal.ZERO);
+    String eR = params.getEnfantResidence();
+    boolean p1AL = params.isParent1ActiviteLucrative();
+    String p1Residence = params.getParent1Residence();
+    boolean p2AL = params.isParent2ActiviteLucrative();
+    String p2Residence = params.getParent2Residence();
+    boolean pEnsemble = params.isParentsEnsemble();
+    Number salaireP1 = params.getParent1Salaire();
+    Number salaireP2 = params.getParent2Salaire();
 
     if(p1AL && !p2AL) {
       return PARENT_1;
@@ -56,4 +53,5 @@ public class AllocationService {
 
     return salaireP1.doubleValue() > salaireP2.doubleValue() ? PARENT_1 : PARENT_2;
   }
+
 }

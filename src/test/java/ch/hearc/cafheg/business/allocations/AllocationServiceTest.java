@@ -1,23 +1,14 @@
 package ch.hearc.cafheg.business.allocations;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import ch.hearc.cafheg.business.common.Montant;
 import ch.hearc.cafheg.infrastructure.persistance.AllocataireMapper;
 import ch.hearc.cafheg.infrastructure.persistance.AllocationMapper;
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.*;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -33,6 +24,7 @@ class AllocationServiceTest {
   void setUp() {
     allocataireMapper = Mockito.mock(AllocataireMapper.class);
     allocationMapper = Mockito.mock(AllocationMapper.class);
+
     allocationService = new AllocationService(allocataireMapper, allocationMapper);
   }
 
@@ -80,81 +72,106 @@ class AllocationServiceTest {
     );
   }
 
-  // Méthodes pour accéder aux constantes privées via réflexion
-  private String getExpectedParent1() {
-    try {
-      Field field = AllocationService.class.getDeclaredField("PARENT_1");
-      field.setAccessible(true);
-      return (String) field.get(null);
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  private String getExpectedParent2() {
-    try {
-      Field field = AllocationService.class.getDeclaredField("PARENT_2");
-      field.setAccessible(true);
-      return (String) field.get(null);
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-
     @Test
-    void getParentDroitAllocation_Parent1OnlyWorking_ShouldReturnParent1() {
-        ParentDroitAllocationRequest request = new ParentDroitAllocationRequest();
-        request.setParent1ActiviteLucrative(true);
-        request.setParent2ActiviteLucrative(false);
+    void getParentDroitAllocation_GivenParent1ActiveParent2Inactive_ShouldReturnParent1() {
+      ParentDroitAllocationParams params = new ParentDroitAllocationParams();
+      params.setParent1ActiviteLucrative(true);
+      params.setParent2ActiviteLucrative(false);
+      params.setEnfantResidence("");
+      params.setParent1Residence("");
+      params.setParent2Residence("");
+      params.setParentsEnsemble(true);
+      params.setParent1Salaire(BigDecimal.valueOf(4000));
+      params.setParent2Salaire(BigDecimal.valueOf(2000));
 
-        String result = allocationService.getParentDroitAllocation(request);
-        assertThat(result).isEqualTo(AllocationService.PARENT_1);
+      String result = allocationService.getParentDroitAllocation(params);
+
+      assertThat(result).isEqualTo(AllocationService.PARENT_1);
     }
 
     @Test
-    void getParentDroitAllocation_Parent2OnlyWorking_ShouldReturnParent2() {
-        ParentDroitAllocationRequest request = new ParentDroitAllocationRequest();
-        request.setParent1ActiviteLucrative(false);
-        request.setParent2ActiviteLucrative(true);
+    void getParentDroitAllocation_GivenParent2ActiveParent1Inactive_ShouldReturnParent2() {
+      ParentDroitAllocationParams params = new ParentDroitAllocationParams();
+      params.setParent1ActiviteLucrative(false);
+      params.setParent2ActiviteLucrative(true);
+      params.setEnfantResidence("");
+      params.setParent1Residence("");
+      params.setParent2Residence("");
+      params.setParentsEnsemble(true);
+      params.setParent1Salaire(BigDecimal.valueOf(3000));
+      params.setParent2Salaire(BigDecimal.valueOf(5000));
 
-        String result = allocationService.getParentDroitAllocation(request);
-        assertThat(result).isEqualTo(AllocationService.PARENT_2);
-    }
-    @Test
-    void getParentDroitAllocation_BothWorking_Parent1HigherSalary_ShouldReturnParent1() {
-        ParentDroitAllocationRequest request = new ParentDroitAllocationRequest();
-        request.setParent1ActiviteLucrative(true);
-        request.setParent2ActiviteLucrative(true);
-        request.setParent1Salaire(new BigDecimal(5000));
-        request.setParent2Salaire(new BigDecimal(3000));
+      String result = allocationService.getParentDroitAllocation(params);
 
-        String result = allocationService.getParentDroitAllocation(request);
-        assertThat(result).isEqualTo(AllocationService.PARENT_1);
+      assertThat(result).isEqualTo(AllocationService.PARENT_2);
     }
 
     @Test
-    void getParentDroitAllocation_BothWorking_Parent2HigherSalary_ShouldReturnParent2() {
-        ParentDroitAllocationRequest request = new ParentDroitAllocationRequest();
-        request.setParent1ActiviteLucrative(true);
-        request.setParent2ActiviteLucrative(true);
-        request.setParent1Salaire(new BigDecimal(3000));
-        request.setParent2Salaire(new BigDecimal(5000));
+    void getParentDroitAllocation_GivenBothActiveAndParent1HasHigherSalary_ShouldReturnParent1() {
+      ParentDroitAllocationParams params = new ParentDroitAllocationParams();
+      params.setParent1ActiviteLucrative(true);
+      params.setParent2ActiviteLucrative(true);
+      params.setEnfantResidence("");
+      params.setParent1Residence("");
+      params.setParent2Residence("");
+      params.setParentsEnsemble(false);
+      params.setParent1Salaire(BigDecimal.valueOf(6000));
+      params.setParent2Salaire(BigDecimal.valueOf(4000));
 
-        String result = allocationService.getParentDroitAllocation(request);
-        assertThat(result).isEqualTo(AllocationService.PARENT_2);
+      String result = allocationService.getParentDroitAllocation(params);
+
+      assertThat(result).isEqualTo(AllocationService.PARENT_1);
     }
 
     @Test
-    void getParentDroitAllocation_BothNotWorking_ShouldReturnParent2ByDefault() {
-        ParentDroitAllocationRequest request = new ParentDroitAllocationRequest();
-        request.setParent1ActiviteLucrative(false);
-        request.setParent2ActiviteLucrative(false);
+    void getParentDroitAllocation_GivenBothActiveAndParent2HasHigherSalary_ShouldReturnParent2() {
+      ParentDroitAllocationParams params = new ParentDroitAllocationParams();
+      params.setParent1ActiviteLucrative(true);
+      params.setParent2ActiviteLucrative(true);
+      params.setEnfantResidence("");
+      params.setParent1Residence("");
+      params.setParent2Residence("");
+      params.setParentsEnsemble(false);
+      params.setParent1Salaire(BigDecimal.valueOf(2000));
+      params.setParent2Salaire(BigDecimal.valueOf(5000));
 
-        String result = allocationService.getParentDroitAllocation(request);
-        assertThat(result).isEqualTo(AllocationService.PARENT_2);
+      String result = allocationService.getParentDroitAllocation(params);
+
+      assertThat(result).isEqualTo(AllocationService.PARENT_2);
     }
 
+    @Test
+    void getParentDroitAllocation_GivenEqualSalaries_ShouldReturnParent2() {
+      ParentDroitAllocationParams params = new ParentDroitAllocationParams();
+      params.setParent1ActiviteLucrative(true);
+      params.setParent2ActiviteLucrative(true);
+      params.setEnfantResidence("");
+      params.setParent1Residence("");
+      params.setParent2Residence("");
+      params.setParentsEnsemble(false);
+      params.setParent1Salaire(BigDecimal.valueOf(4000));
+      params.setParent2Salaire(BigDecimal.valueOf(4000));
 
+      String result = allocationService.getParentDroitAllocation(params);
+
+      assertThat(result).isEqualTo(AllocationService.PARENT_2);
+    }
+
+    @Test
+    void getParentDroitAllocation_GivenBothInactive_ShouldReturnBySalaryComparison() {
+      ParentDroitAllocationParams params = new ParentDroitAllocationParams();
+      params.setParent1ActiviteLucrative(false);
+      params.setParent2ActiviteLucrative(false);
+      params.setEnfantResidence("");
+      params.setParent1Residence("");
+      params.setParent2Residence("");
+      params.setParentsEnsemble(false);
+      params.setParent1Salaire(BigDecimal.valueOf(1000));
+      params.setParent2Salaire(BigDecimal.valueOf(500));
+
+      String result = allocationService.getParentDroitAllocation(params);
+
+      assertThat(result).isEqualTo(AllocationService.PARENT_1);
+    }
 
 }
