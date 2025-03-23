@@ -72,106 +72,116 @@ class AllocationServiceTest {
     );
   }
 
-    @Test
-    void getParentDroitAllocation_GivenParent1ActiveParent2Inactive_ShouldReturnParent1() {
-      ParentDroitAllocationParams params = new ParentDroitAllocationParams();
-      params.setParent1ActiviteLucrative(true);
-      params.setParent2ActiviteLucrative(false);
-      params.setEnfantResidence("");
-      params.setParent1Residence("");
-      params.setParent2Residence("");
-      params.setParentsEnsemble(true);
-      params.setParent1Salaire(BigDecimal.valueOf(4000));
-      params.setParent2Salaire(BigDecimal.valueOf(2000));
+  @Test
+  void getParentDroitAllocation_GivenOneParentActive_ShouldReturnActiveParent() {
+    ParentDroitAllocationParams params = new ParentDroitAllocationParams();
+    params.setParent1ActiviteLucrative(true);
+    params.setParent2ActiviteLucrative(false);
+    String parentDroitAllocation = allocationService.getParentDroitAllocation(params);
+    assertThat(parentDroitAllocation).isEqualTo(AllocationService.PARENT_1);
+  }
 
-      String result = allocationService.getParentDroitAllocation(params);
+  @Test
+  void getParentDroitAllocation_GivenBothParentActiveOneHasAuthority_ShouldReturnParentWithAuthority() {
+    ParentDroitAllocationParams params = new ParentDroitAllocationParams();
+    params.setParent1ActiviteLucrative(true);
+    params.setParent1AutoriteParentale(true);
+    params.setParent2ActiviteLucrative(true);
+    String parentDroitAllocation = allocationService.getParentDroitAllocation(params);
+    assertThat(parentDroitAllocation).isEqualTo(AllocationService.PARENT_1);
+  }
 
-      assertThat(result).isEqualTo(AllocationService.PARENT_1);
-    }
+  @Test
+  void getParentDroitAllocation_GivenBothParentActiveHaveAuthorityOneLivesWithChild_ShouldReturnParentLivingWithChild() {
+    ParentDroitAllocationParams params = new ParentDroitAllocationParams();
+    params.setEnfantResidence("NE");
+    params.setEnfantVitAvecParent1(true);
+    params.setParent1ActiviteLucrative(true);
+    params.setParent1AutoriteParentale(true);
+    params.setParent1Residence("NE");
+    params.setParent2ActiviteLucrative(true);
+    params.setParent2AutoriteParentale(true);
+    params.setParent2Residence("NE");
+    String parentDroitAllocation = allocationService.getParentDroitAllocation(params);
+    assertThat(parentDroitAllocation).isEqualTo(AllocationService.PARENT_1);
+  }
 
-    @Test
-    void getParentDroitAllocation_GivenParent2ActiveParent1Inactive_ShouldReturnParent2() {
-      ParentDroitAllocationParams params = new ParentDroitAllocationParams();
-      params.setParent1ActiviteLucrative(false);
-      params.setParent2ActiviteLucrative(true);
-      params.setEnfantResidence("");
-      params.setParent1Residence("");
-      params.setParent2Residence("");
-      params.setParentsEnsemble(true);
-      params.setParent1Salaire(BigDecimal.valueOf(3000));
-      params.setParent2Salaire(BigDecimal.valueOf(5000));
+  @Test
+  void getParentDroitAllocation_GivenBothParentActiveHaveAuthorityLiveTogetherButOneWorksInTheChildCanton_ShouldReturnParentWorkingInTheChildCanton() {
+    ParentDroitAllocationParams params = new ParentDroitAllocationParams();
+    params.setEnfantResidence("NE");
+    params.setParent1ActiviteLucrative(true);
+    params.setParent1CantonActivite("NE");
+    params.setParent1AutoriteParentale(true);
+    params.setParent1Residence("NE");
+    params.setParent2ActiviteLucrative(true);
+    params.setParent2CantonActivite("FR");
+    params.setParent2AutoriteParentale(true);
+    params.setParent2Residence("NE");
+    params.setParentsEnsemble(true);
+    String parentDroitAllocation = allocationService.getParentDroitAllocation(params);
+    assertThat(parentDroitAllocation).isEqualTo(AllocationService.PARENT_1);
+  }
 
-      String result = allocationService.getParentDroitAllocation(params);
+  @Test
+  void getParentDroitAllocation_GivenBothParentActiveHaveAuthorityLiveTogetherOneSalariedOneIndependent_ShouldReturnSalariedParent() {
+    ParentDroitAllocationParams params = new ParentDroitAllocationParams();
+    params.setEnfantResidence("NE");
+    params.setParent1ActiviteLucrative(true);
+    params.setParent1CantonActivite("NE");
+    params.setParent1StatutPro(StatutProfessionnel.SALARIE);
+    params.setParent1AutoriteParentale(true);
+    params.setParent1Residence("NE");
+    params.setParent2ActiviteLucrative(true);
+    params.setParent2CantonActivite("NE");
+    params.setParent2StatutPro(StatutProfessionnel.INDEPENDANT);
+    params.setParent2AutoriteParentale(true);
+    params.setParent2Residence("NE");
+    params.setParentsEnsemble(true);
+    String parentDroitAllocation = allocationService.getParentDroitAllocation(params);
+    assertThat(parentDroitAllocation).isEqualTo(AllocationService.PARENT_1);
+  }
 
-      assertThat(result).isEqualTo(AllocationService.PARENT_2);
-    }
+  @Test
+  void getParentDroitAllocation_GivenBothParentActiveHaveAuthorityLiveTogetherBothSalaried_ShouldReturnParentWithHigherSalary() {
+    ParentDroitAllocationParams params = new ParentDroitAllocationParams();
+    params.setEnfantResidence("NE");
+    params.setParent1ActiviteLucrative(true);
+    params.setParent1CantonActivite("NE");
+    params.setParent1StatutPro(StatutProfessionnel.SALARIE);
+    params.setParent1AutoriteParentale(true);
+    params.setParent1Residence("NE");
+    params.setParent2ActiviteLucrative(true);
+    params.setParent2CantonActivite("NE");
+    params.setParent2StatutPro(StatutProfessionnel.SALARIE);
+    params.setParent2AutoriteParentale(true);
+    params.setParent2Residence("NE");
+    params.setParentsEnsemble(true);
+    params.setParent1Salaire(new Montant(new BigDecimal(1000)));
+    params.setParent2Salaire(new Montant(new BigDecimal(2000)));
+    String parentDroitAllocation = allocationService.getParentDroitAllocation(params);
+    assertThat(parentDroitAllocation).isEqualTo(AllocationService.PARENT_2);
+  }
 
-    @Test
-    void getParentDroitAllocation_GivenBothActiveAndParent1HasHigherSalary_ShouldReturnParent1() {
-      ParentDroitAllocationParams params = new ParentDroitAllocationParams();
-      params.setParent1ActiviteLucrative(true);
-      params.setParent2ActiviteLucrative(true);
-      params.setEnfantResidence("");
-      params.setParent1Residence("");
-      params.setParent2Residence("");
-      params.setParentsEnsemble(false);
-      params.setParent1Salaire(BigDecimal.valueOf(6000));
-      params.setParent2Salaire(BigDecimal.valueOf(4000));
-
-      String result = allocationService.getParentDroitAllocation(params);
-
-      assertThat(result).isEqualTo(AllocationService.PARENT_1);
-    }
-
-    @Test
-    void getParentDroitAllocation_GivenBothActiveAndParent2HasHigherSalary_ShouldReturnParent2() {
-      ParentDroitAllocationParams params = new ParentDroitAllocationParams();
-      params.setParent1ActiviteLucrative(true);
-      params.setParent2ActiviteLucrative(true);
-      params.setEnfantResidence("");
-      params.setParent1Residence("");
-      params.setParent2Residence("");
-      params.setParentsEnsemble(false);
-      params.setParent1Salaire(BigDecimal.valueOf(2000));
-      params.setParent2Salaire(BigDecimal.valueOf(5000));
-
-      String result = allocationService.getParentDroitAllocation(params);
-
-      assertThat(result).isEqualTo(AllocationService.PARENT_2);
-    }
-
-    @Test
-    void getParentDroitAllocation_GivenEqualSalaries_ShouldReturnParent2() {
-      ParentDroitAllocationParams params = new ParentDroitAllocationParams();
-      params.setParent1ActiviteLucrative(true);
-      params.setParent2ActiviteLucrative(true);
-      params.setEnfantResidence("");
-      params.setParent1Residence("");
-      params.setParent2Residence("");
-      params.setParentsEnsemble(false);
-      params.setParent1Salaire(BigDecimal.valueOf(4000));
-      params.setParent2Salaire(BigDecimal.valueOf(4000));
-
-      String result = allocationService.getParentDroitAllocation(params);
-
-      assertThat(result).isEqualTo(AllocationService.PARENT_2);
-    }
-
-    @Test
-    void getParentDroitAllocation_GivenBothInactive_ShouldReturnBySalaryComparison() {
-      ParentDroitAllocationParams params = new ParentDroitAllocationParams();
-      params.setParent1ActiviteLucrative(false);
-      params.setParent2ActiviteLucrative(false);
-      params.setEnfantResidence("");
-      params.setParent1Residence("");
-      params.setParent2Residence("");
-      params.setParentsEnsemble(false);
-      params.setParent1Salaire(BigDecimal.valueOf(1000));
-      params.setParent2Salaire(BigDecimal.valueOf(500));
-
-      String result = allocationService.getParentDroitAllocation(params);
-
-      assertThat(result).isEqualTo(AllocationService.PARENT_1);
-    }
+  @Test
+  void getParentDroitAllocation_GivenBothParentActiveHaveAuthorityLiveTogetherBothIndependent_ShouldReturnParentWithHigherSalary() {
+    ParentDroitAllocationParams params = new ParentDroitAllocationParams();
+    params.setEnfantResidence("NE");
+    params.setParent1ActiviteLucrative(true);
+    params.setParent1CantonActivite("NE");
+    params.setParent1StatutPro(StatutProfessionnel.INDEPENDANT);
+    params.setParent1AutoriteParentale(true);
+    params.setParent1Residence("NE");
+    params.setParent2ActiviteLucrative(true);
+    params.setParent2CantonActivite("NE");
+    params.setParent2StatutPro(StatutProfessionnel.INDEPENDANT);
+    params.setParent2AutoriteParentale(true);
+    params.setParent2Residence("NE");
+    params.setParentsEnsemble(true);
+    params.setParent1Salaire(new Montant(new BigDecimal(1000)));
+    params.setParent2Salaire(new Montant(new BigDecimal(2000)));
+    String parentDroitAllocation = allocationService.getParentDroitAllocation(params);
+    assertThat(parentDroitAllocation).isEqualTo(AllocationService.PARENT_2);
+  }
 
 }
