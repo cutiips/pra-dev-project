@@ -1,5 +1,9 @@
-package ch.hearc.cafheg.business.allocations;
+package ch.hearc.cafheg.service;
 
+import ch.hearc.cafheg.business.allocations.Allocataire;
+import ch.hearc.cafheg.business.allocations.Allocation;
+import ch.hearc.cafheg.business.allocations.ParentDroitAllocationParams;
+import ch.hearc.cafheg.business.allocations.StatutProfessionnel;
 import ch.hearc.cafheg.infrastructure.persistance.AllocataireMapper;
 import ch.hearc.cafheg.infrastructure.persistance.AllocationMapper;
 import org.slf4j.Logger;

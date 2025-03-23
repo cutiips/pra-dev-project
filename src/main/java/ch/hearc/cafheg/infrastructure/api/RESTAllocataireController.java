@@ -3,7 +3,7 @@ package ch.hearc.cafheg.infrastructure.api;
 import static ch.hearc.cafheg.infrastructure.persistance.Database.inTransaction;
 
 import ch.hearc.cafheg.business.allocations.Allocataire;
-import ch.hearc.cafheg.business.allocations.AllocataireService;
+import ch.hearc.cafheg.service.AllocataireService;
 import ch.hearc.cafheg.infrastructure.persistance.AllocataireMapper;
 import ch.hearc.cafheg.infrastructure.persistance.VersementMapper;
 import org.springframework.http.ResponseEntity;

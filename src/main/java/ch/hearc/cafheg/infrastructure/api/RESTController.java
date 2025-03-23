@@ -3,12 +3,13 @@ package ch.hearc.cafheg.infrastructure.api;
 import static ch.hearc.cafheg.infrastructure.persistance.Database.inTransaction;
 
 import ch.hearc.cafheg.business.allocations.*;
-import ch.hearc.cafheg.business.versements.VersementService;
+import ch.hearc.cafheg.service.VersementService;
 import ch.hearc.cafheg.infrastructure.pdf.PDFExporter;
 import ch.hearc.cafheg.infrastructure.persistance.AllocataireMapper;
 import ch.hearc.cafheg.infrastructure.persistance.AllocationMapper;
 import ch.hearc.cafheg.infrastructure.persistance.EnfantMapper;
 import ch.hearc.cafheg.infrastructure.persistance.VersementMapper;
+import ch.hearc.cafheg.service.AllocationService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 

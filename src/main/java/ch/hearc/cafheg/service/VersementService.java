@@ -1,9 +1,13 @@
-package ch.hearc.cafheg.business.versements;
+package ch.hearc.cafheg.service;
 
 import static java.util.stream.Collectors.toMap;
 
 import ch.hearc.cafheg.business.allocations.Allocataire;
 import ch.hearc.cafheg.business.common.Montant;
+import ch.hearc.cafheg.business.versements.VersementAllocation;
+import ch.hearc.cafheg.business.versements.VersementAllocationNaissance;
+import ch.hearc.cafheg.business.versements.VersementParentEnfant;
+import ch.hearc.cafheg.business.versements.VersementParentParMois;
 import ch.hearc.cafheg.infrastructure.pdf.PDFExporter;
 import ch.hearc.cafheg.infrastructure.persistance.AllocataireMapper;
 import ch.hearc.cafheg.infrastructure.persistance.VersementMapper;

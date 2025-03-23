@@ -1,10 +1,10 @@
-package ch.hearc.cafheg.business.allocations;
+package ch.hearc.cafheg.service;
 
+import ch.hearc.cafheg.business.allocations.Allocataire;
 import ch.hearc.cafheg.infrastructure.persistance.AllocataireMapper;
 import ch.hearc.cafheg.infrastructure.persistance.VersementMapper;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class AllocataireService {
 
