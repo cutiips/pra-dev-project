@@ -33,7 +33,7 @@
     </logger>
 
     <!-- Logger pour les infos dans les services -->
-    <logger name="ch.hearc.cafheg.services" level="INFO">
+    <logger name="ch.hearc.cafheg.service" level="INFO">
         <appender-ref ref="INFO_FILE"/>
     </logger>
 
