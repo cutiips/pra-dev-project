@@ -28,7 +28,7 @@
         <appender-ref ref="ERROR_FILE"/>
     </logger>
 
-    <logger name="ch.hearc.cafheg.service" level="INFO">
+    <logger name="ch.hearc.cafheg.service" level="INFO" additivity="false">
         <appender-ref ref="INFO_FILE"/>
     </logger>
 
