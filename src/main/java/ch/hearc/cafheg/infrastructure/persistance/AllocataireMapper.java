@@ -19,7 +19,7 @@ public class AllocataireMapper extends Mapper {
   private static final String QUERY_FIND_ALL = "SELECT NOM,PRENOM,NO_AVS FROM ALLOCATAIRES";
   private static final String QUERY_FIND_WHERE_NOM_LIKE = "SELECT NOM,PRENOM,NO_AVS FROM ALLOCATAIRES WHERE NOM LIKE ?";
   private static final String QUERY_FIND_WHERE_NUMERO = "SELECT NO_AVS, NOM, PRENOM FROM ALLOCATAIRES WHERE NUMERO=?";
-
+  private static final String QUERY_FIND_WHERE_NO_AVS = "SELECT NO_AVS, NOM, PRENOM FROM ALLOCATAIRES WHERE NO_AVS=?";
   private static final String QUERY_DELETE_BY_ID = "DELETE FROM ALLOCATAIRES WHERE NUMERO=?";
 
   public List<Allocataire> findAll(String likeNom) {
@@ -136,8 +136,8 @@ public class AllocataireMapper extends Mapper {
     logger.info("findByNoAVS() " + noAVS);
     Connection connection = activeJDBCConnection();
     try {
-      logger.debug("SQL: " + QUERY_FIND_WHERE_NUMERO);
-      PreparedStatement preparedStatement = connection.prepareStatement(QUERY_FIND_WHERE_NUMERO);
+      logger.debug("SQL: " + QUERY_FIND_WHERE_NO_AVS);
+      PreparedStatement preparedStatement = connection.prepareStatement(QUERY_FIND_WHERE_NO_AVS);
       preparedStatement.setString(1, noAVS);
       ResultSet resultSet = preparedStatement.executeQuery();
 
@@ -154,5 +154,6 @@ public class AllocataireMapper extends Mapper {
       throw new RuntimeException("Erreur lors de la recherche de l'allocataire", e);
     }
   }
+
 
 }

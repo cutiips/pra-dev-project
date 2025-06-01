@@ -6,6 +6,7 @@ import ch.hearc.cafheg.infrastructure.persistance.VersementMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Connection;
 import java.util.List;
 
 public class AllocataireService {
@@ -14,14 +15,22 @@ public class AllocataireService {
 
     private final AllocataireMapper allocataireMapper;
     private final VersementMapper versementMapper;
+    private final Connection connection;
 
     public AllocataireService(AllocataireMapper allocataireMapper, VersementMapper versementMapper) {
         this.allocataireMapper = allocataireMapper;
         this.versementMapper = versementMapper;
+        this.connection = null;
+    }
+
+    public AllocataireService(Connection connection) {
+        this.allocataireMapper = new AllocataireMapper();
+        this.versementMapper = new VersementMapper();
+        this.connection = connection;
     }
 
     public List<Allocataire> findAllAllocataires(String nom) {
-        return allocataireMapper.findAll(nom) ;
+        return allocataireMapper.findAll(nom);
     }
 
     public boolean updateAllocataire(String noAVS, String nouveauNom, String nouveauPrenom) {
