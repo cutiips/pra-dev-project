@@ -1,6 +1,6 @@
 # Projet CAFHEG
 
-Ce projet vise à développer et tester des services liés à la gestion des allocataires et des allocations. Voici un résumé des solutions apportées pour chaque exercice.
+Ce projet a pour objectif de développer, tester et structurer des services liés à la gestion des allocataires et des allocations. Il s’articule autour de plusieurs exercices, chacun visant une amélioration progressive de l’architecture logicielle, des tests, de l’exposition d’API et de la qualité du code.
 
 ---
 
@@ -80,4 +80,5 @@ Ce projet vise à développer et tester des services liés à la gestion des all
 ## Structure du projet
 - **Langages** : Java, SQL
 - **Frameworks** : Spring Boot, JUnit 5, DBUnit, AssertJ
+- **SDK** : Java 17
 - **Outils** : IntelliJ IDEA, Postman
