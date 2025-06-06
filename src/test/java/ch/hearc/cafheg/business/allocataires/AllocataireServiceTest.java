@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
+import ch.hearc.cafheg.business.common.Montant;
+import ch.hearc.cafheg.business.versements.VersementParentEnfant;
 import ch.hearc.cafheg.service.AllocataireService;
 import ch.hearc.cafheg.infrastructure.persistance.AllocataireMapper;
 import ch.hearc.cafheg.business.allocations.Allocataire;
@@ -14,6 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -67,6 +70,35 @@ class AllocataireServiceTest {
 
         verify(allocataireMapper, times(1)).deleteById(allocataireId);
     }
+
+    @Test
+    void deleteAllocataire_ShouldDelete_WhenAllocataireHasNoVersements() {
+        long allocataireId = 456L;
+
+        // Simule l’absence de versements
+        when(versementMapper.findVersementParentEnfant()).thenReturn(Collections.emptyList());
+
+        boolean result = allocataireService.deleteAllocataire(allocataireId);
+
+        assertThat(result).isTrue();
+        verify(allocataireMapper).deleteById(allocataireId);
+    }
+
+
+    @Test
+    void deleteAllocataire_ShouldNotDelete_WhenAllocataireHasVersements() {
+        long allocataireId = 123L;
+
+        // Simule qu’un versement existe pour cet allocataire
+        VersementParentEnfant versement = new VersementParentEnfant(allocataireId, 456L, new Montant(BigDecimal.TEN));
+        when(versementMapper.findVersementParentEnfant()).thenReturn(List.of(versement));
+
+        boolean result = allocataireService.deleteAllocataire(allocataireId);
+
+        assertThat(result).isFalse();
+        verify(allocataireMapper, never()).deleteById(anyLong());
+    }
+
 
     @Test
     void deleteAllocataire_ShouldThrowException_WhenAllocataireNotFound() {
