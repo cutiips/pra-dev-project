@@ -59,8 +59,9 @@ public class RESTController {
   }
 
   @GetMapping("/allocations/{year}/somme")
-  public BigDecimal sommeAs(@PathVariable("year") int year) {
-    return inTransaction(() -> versementService.findSommeAllocationParAnnee(year).getValue());
+  public Map<String, BigDecimal> sommeAs(@PathVariable("year") int year) {
+    BigDecimal somme = inTransaction(() -> versementService.findSommeAllocationParAnnee(year).getValue());
+    return Map.of("somme", somme);
   }
 
   @GetMapping("/allocations-naissances/{year}/somme")
